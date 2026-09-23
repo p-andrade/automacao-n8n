@@ -1,0 +1,13 @@
+﻿# Dependências e caches locais
+node_modules/
+.venv/
+__pycache__/
+*.log
+
+# Arquivos do sistema operacional
+Thumbs.db
+.DS_Store
+
+# IDE e editores
+.vscode/
+.idea/
