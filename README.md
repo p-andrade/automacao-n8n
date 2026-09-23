@@ -90,4 +90,4 @@ https://notebook.google.com/notebook/ec58679b-d491-4264-8a47-34f4ee0ca672?authus
 
 ## 🔗 Repositório
 
-[Inserir URL do GitHub no final quando for realizar o commit de todo o repositório de arquivos que estão sendo criados]
+https://github.com/p-andrade/automacao-n8n
