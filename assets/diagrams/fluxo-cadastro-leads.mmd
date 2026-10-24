@@ -1,0 +1,6 @@
+flowchart LR
+    A["1. Webhook Receber Lead<br/>(POST /cadastro-leads)"] --> B{"2. Validar Dados do Lead<br/>(Nome preenchido e E-mail válido?)"}
+    B -- "Sim (True)" --> C["3. Preparar Registro do Lead<br/>(Normalização + Protocolo)"]
+    C --> D["4. Montar Notificacao Demonstrativa<br/>(Payload Comercial + Status)"]
+    D --> E["5. Responder Sucesso<br/>(HTTP 200 OK)"]
+    B -- "Não (False)" --> F["6. Responder Erro Validacao<br/>(HTTP 400 Bad Request)"]

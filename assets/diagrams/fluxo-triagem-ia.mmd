@@ -1,0 +1,9 @@
+flowchart LR
+    A["1. Webhook Entrada Solicitacao<br/>(POST /triagem-ia)"] --> B["2. Normalizar Dados de Entrada<br/>(Edit Fields / Set)"]
+    B --> C{"3. Verificar Dados Obrigatorios<br/>(Solicitante, E-mail e Mensagem OK?)"}
+    C -- "Sim (True)" --> D["4. Agente IA de Triagem<br/>(AI Agent + Prompt Estruturado)"]
+    M[("Sub-nó: Modelo OpenAI Chat<br/>(gpt-4o-mini)")] -. "ai_languageModel" .-> D
+    D --> E["5. Validar e Classificar Resposta<br/>(Code Node: Guardrail + Fallback)"]
+    E --> F["6. Formatar Saida Estruturada<br/>(Edit Fields / Set)"]
+    F --> G["7. Responder Triagem Concluida<br/>(HTTP 200 OK)"]
+    C -- "Não (False)" --> H["8. Responder Erro Dados Incompletos<br/>(HTTP 400 Bad Request)"]
