@@ -1,0 +1,7 @@
+{
+  "solicitante": "Carlos Eduardo Mendes",
+  "email": "carlos.mendes@logisticaexpress.com.br",
+  "assunto": "Erro crítico 503 na integração do Webhook em produção",
+  "mensagem": "Olá equipe, nosso endpoint de integração parou de responder há 20 minutos em ambiente de produção e está retornando erro de timeout e falha na API. Precisamos de suporte técnico urgente para restabelecer o fluxo.",
+  "prioridade_informada": "Alta"
+}

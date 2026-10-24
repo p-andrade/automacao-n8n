@@ -1,0 +1,292 @@
+{
+  "name": "01 - Cadastro Automatizado de Leads",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cadastro-leads",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "name": "Webhook Receber Lead",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ],
+      "webhookId": "dio-webhook-cadastro-leads-01"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-nome-obrigatorio",
+              "leftValue": "={{ ($json.body?.nome ?? $json.nome ?? '').toString().trim() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "cond-email-arroba",
+              "leftValue": "={{ ($json.body?.email ?? $json.email ?? '').toString().trim() }}",
+              "rightValue": "@",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "cond-email-ponto",
+              "leftValue": "={{ ($json.body?.email ?? $json.email ?? '').toString().trim() }}",
+              "rightValue": ".",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "name": "Validar Dados do Lead",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "field-lead-id",
+              "name": "lead_id",
+              "value": "={{ 'LEAD-' + ($execution.id ?? 'DEMO-001') }}",
+              "type": "string"
+            },
+            {
+              "id": "field-nome",
+              "name": "nome",
+              "value": "={{ ($json.body?.nome ?? $json.nome ?? '').toString().trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "field-email",
+              "name": "email",
+              "value": "={{ ($json.body?.email ?? $json.email ?? '').toString().trim().toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "field-telefone",
+              "name": "telefone",
+              "value": "={{ ($json.body?.telefone ?? $json.telefone ?? 'Não informado').toString().trim() || 'Não informado' }}",
+              "type": "string"
+            },
+            {
+              "id": "field-empresa",
+              "name": "empresa",
+              "value": "={{ ($json.body?.empresa ?? $json.empresa ?? 'Não informada').toString().trim() || 'Não informada' }}",
+              "type": "string"
+            },
+            {
+              "id": "field-origem",
+              "name": "origem",
+              "value": "={{ ($json.body?.origem ?? $json.origem ?? 'Direto / Não especificada').toString().trim() || 'Direto / Não especificada' }}",
+              "type": "string"
+            },
+            {
+              "id": "field-interesse",
+              "name": "interesse",
+              "value": "={{ ($json.body?.interesse ?? $json.interesse ?? 'Geral').toString().trim() || 'Geral' }}",
+              "type": "string"
+            },
+            {
+              "id": "field-processado-em",
+              "name": "processado_em",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "name": "Preparar Registro do Lead",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        740,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "notif-status",
+              "name": "status",
+              "value": "sucesso",
+              "type": "string"
+            },
+            {
+              "id": "notif-status-proc",
+              "name": "status_processamento",
+              "value": "registrado_demonstrativo",
+              "type": "string"
+            },
+            {
+              "id": "notif-aviso-persistencia",
+              "name": "observacao_persistencia",
+              "value": "Saída demonstrativa: os dados foram validados e higienizados com sucesso. Para persistência permanente, conecte um nó de banco de dados ou CRM após esta etapa.",
+              "type": "string"
+            },
+            {
+              "id": "notif-dados-lead",
+              "name": "lead",
+              "value": "={{ { lead_id: $json.lead_id, nome: $json.nome, email: $json.email, telefone: $json.telefone, empresa: $json.empresa, origem: $json.origem, interesse: $json.interesse, processado_em: $json.processado_em } }}",
+              "type": "object"
+            },
+            {
+              "id": "notif-resumo-comercial",
+              "name": "notificacao_demonstrativa",
+              "value": "={{ { canal_sugerido: '#comercial-novos-leads', assunto: 'Novo Lead Qualificado: ' + $json.nome, mensagem: 'Lead recebido de ' + $json.origem + ' | Empresa: ' + $json.empresa + ' | E-mail: ' + $json.email + ' | Interesse: ' + $json.interesse } }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0004-4000-8000-000000000004",
+      "name": "Montar Notificacao Demonstrativa",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1020,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "firstIncomingItem",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "a1b2c3d4-0005-4000-8000-000000000005",
+      "name": "Responder Sucesso",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1280,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"status\": \"erro_validacao\",\n  \"codigo_http\": 400,\n  \"mensagem\": \"Payload inválido: os campos 'nome' (não vazio) e 'email' (em formato plausível contendo '@' e '.') são obrigatórios.\",\n  \"dados_recebidos\": {\n    \"nome\": {{ JSON.stringify($json.body?.nome ?? $json.nome ?? null) }},\n    \"email\": {{ JSON.stringify($json.body?.email ?? $json.email ?? null) }}\n  },\n  \"acao_recomendada\": \"Corrija os campos obrigatórios no corpo JSON da requisição e envie novamente.\"\n}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "a1b2c3d4-0006-4000-8000-000000000006",
+      "name": "Responder Erro Validacao",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        740,
+        440
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Receber Lead": {
+      "main": [
+        [
+          {
+            "node": "Validar Dados do Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar Dados do Lead": {
+      "main": [
+        [
+          {
+            "node": "Preparar Registro do Lead",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder Erro Validacao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Registro do Lead": {
+      "main": [
+        [
+          {
+            "node": "Montar Notificacao Demonstrativa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar Notificacao Demonstrativa": {
+      "main": [
+        [
+          {
+            "node": "Responder Sucesso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "dio-n8n-workflow-01-v1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": [
+    {
+      "name": "desafio-dio"
+    },
+    {
+      "name": "leads"
+    }
+  ]
+}
