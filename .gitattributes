@@ -1,0 +1,29 @@
+# ==============================================================================
+# .gitattributes — Normalização de finais de linha e tipos de arquivo
+# ==============================================================================
+
+# Detecção automática de arquivos de texto e normalização para LF no repositório
+* text=auto eol=lf
+
+# Documentação, prompts e diagramas
+*.md text diff=markdown eol=lf
+*.mmd text eol=lf
+*.txt text eol=lf
+
+# Código e dados estruturados
+*.json text eol=lf
+*.py text diff=python eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Scripts Windows (preservar CRLF se existirem)
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Arquivos binários e imagens (não alterar bytes)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary

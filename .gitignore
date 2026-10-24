@@ -1,13 +1,63 @@
-﻿# Dependências e caches locais
-node_modules/
+# ==============================================================================
+# .gitignore — Desafio DIO: Planejando Automações com n8n Usando Bons Prompts
+# ==============================================================================
+
+# Variáveis de ambiente, credenciais e segredos (NUNCA versionar)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+*credentials*.json
+*secret*
+cookies.txt
+.n8n/
+
+# Dependências e ambientes virtuais Python
 .venv/
+venv/
+env/
 __pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Dependências Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs e arquivos temporários
 *.log
+logs/
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
 
-# Arquivos do sistema operacional
+# Saídas de build e distribuição
+dist/
+build/
+out/
+
+# Arquivos específicos de sistema operacional
 Thumbs.db
+ehthumbs.db
+Desktop.ini
 .DS_Store
+.AppleDouble
+.LSOverride
 
-# IDE e editores
+# Editores e IDEs
 .vscode/
 .idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
